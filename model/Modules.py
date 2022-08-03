@@ -23,15 +23,18 @@ class ScaledDotProductAttention(nn.Module):
      
     def forward(self, q, k, v, mask=None):
         """
-        q    (d_k)
-        k, v ( B_size, N_heads, S_len, d_k )
+        q, k, v     (B N S d_model/N) 
+        mask        ()
+        
+        q k 로 scaled dot product attention 계산을 해 v에 반영한 결과를 return 한다.
+        
         """
-        attn = torch.matmul(q / self.scale, k.transpose(2,3))     # k( B, N, S, d ) -> (B, N, d, S), q( B  )
+        attn = torch.matmul(q / self.scale, k.transpose(-1,-2))     # k( B, N, S, d ) -> k(B, N, d, S), q( B N d ) -> k(b n d s)*q(b n d s(repeat)) => attn(b n )
         
         if mask is not None:
             attn = attn.masked_fill(mask==0, -1e9)  # mask에서 0인 값들을 -1e-9 값으로 대체한다.
         
-        attn = self.dropout(F.softmax(attn, dim = -1))  # 마지막 차원을 softmax 한 결과를 dropout   ( B N d S )인 attn 의 S 차원을 
+        attn = self.dropout(F.softmax(attn, dim = -1))  # 마지막 차원을 softmax 한 결과를 dropout   ( B N d S )인 attn 의 S 차원
         output = torch.matmul(attn, v)
         
-        return output, attn
+        return output, attn     # value 에 먹인 값, attention score 두개를 반환한다.
