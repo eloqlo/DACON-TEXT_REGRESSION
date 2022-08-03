@@ -6,8 +6,11 @@ import torch.nn as nn
 import torch.nn.functional as F
 from model.Modules import ScaledDotProductAttention
 
+# embedded input 받으면 -> q, v, k 계산을 해서 -> Scaled_dotproduct_attn 계산을 거쳐 -> dropout먹이고 -> residual(add, norm) 까지 수행하는 SubLayer
 class MultiHeadAttention(nn.Module):
+    """
     
+    """
     def __init__(self, n_head, d_model, d_k, d_v, dropout=0.1):
         
         super().__init__()
