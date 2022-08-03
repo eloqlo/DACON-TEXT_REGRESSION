@@ -1,7 +1,7 @@
 # Toy Project : text regression
 
-Text Regression task
-Transformer's Encoder
+Text Regression task <br/>
+Used Transformer's Encoder <br/>
 
 
 Reference
