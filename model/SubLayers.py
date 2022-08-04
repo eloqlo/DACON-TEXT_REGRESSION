@@ -6,7 +6,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from model.Modules import ScaledDotProductAttention
 
-# embedded input 받으면 -> q, v, k 계산을 해서 -> Scaled_dotproduct_attn 계산을 거쳐 -> dropout먹이고 -> residual(add, norm) 까지 수행하는 SubLayer
+# embedded input(q,v,k) 받으면 -> q, v, k 계산을 해서 -> Scaled_dotproduct_attn 계산을 거쳐 -> dropout먹이고 -> residual(add, norm) 까지 수행하는 SubLayer
+# input을 받는거랑, residual(add and norm) 이 다른거구나.
 class MultiHeadAttention(nn.Module):
     """
     
@@ -61,7 +62,7 @@ class MultiHeadAttention(nn.Module):
         
         return q, attn
         
-
+# 2 affine layer + dropout + residual + layerNorm
 class PositionwiseFeedForward(nn.Module):
     
     def __init__(self, d_in, d_hid, dropout=0.1):
