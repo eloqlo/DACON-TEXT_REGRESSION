@@ -29,6 +29,14 @@ class PostiionalEncoding(nn.Module):
         # register_buffer: optimizer가 업데이트하지 않음. 하지만 GPU연산 가능한 layer.
         # 네트워크를 end2end 로 학습하려는데, 중간에 업데이트하지 않는 레이어 넣고싶을 때 사용하면 된다.
         # positional encoding 은 업데이트되는 값이 아니므로 이를 사용함.
+        """ https://teamdable.github.io/techblog/PyTorch-Module
+        
+        >>> torch.nn.Module.register_buffer('running_mean', torch.zeros(num_features))  # example
+        
+        parameter가 말 그대로 buffer을 수행하기 위한 목적으로 활용한다.
+        buffer도 state_dict에 저장되지만, backprop을 진행하지 않고 최적화에 사용되지 않는다는 의미이다.
+        단순한 buffer로써의 역할을 맡는 본 모듈이다.
+        """
 
     # return sinusoid FloatTensor table (1 S d)
     def _get_sinusoid_encoding_table(self, n_position, d_hid):
@@ -48,4 +56,4 @@ class PostiionalEncoding(nn.Module):
         return torch.FloatTensor(sinusoid_table).unsqueeze(0)   # batch용 새로운 차원만들기?
     
     def forward(self, x):
-        return x + self.pos_table[:, :x.size(1)].clone().detach()
+        return x + self.pos_table[:, :x.size(1)].clone().detach()   # clone() detach() ?
