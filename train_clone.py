@@ -142,16 +142,29 @@ def train(model, training_data, validation_data, optimizer, device, opt):
             model, training_data, optimizer, opt, device, smoothing=opt.label_smoothing)
         
         
-        
-        
         pass
     
     
     
 
 def main():
+    ''' 
+    Usage:
+    python train.py -data_pkl m30k_deen_shr.pkl -log m30k_deen_shr -embs_share_weight -proj_share_weight -label_smoothing -output_dir output -b 256 -warmup 128000
+    '''
     
     # some parser things
+    parser = argparse.ArgumentParser()
+    
+    parser.add_argument('-data_pkl', default=None)      # all-in-1 data pickle or bpe field
+    
+    parser.add_argument('-train_path', default=None)
+    parser.add_argument('-val_path', default=None)
+    
+    parser.add_argument('-epoch', type=int, default=10)
+    parser.add_argument('-b', '--batch_size', type=int, default=2048)
+    
+    pass
     
     # some settings here
     
