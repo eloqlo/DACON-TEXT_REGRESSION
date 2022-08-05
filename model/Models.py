@@ -141,7 +141,63 @@ class Decoder(nn.Module):
         if return_attns:
             return dec_output, dec_slf_attn_list, dec_enc_attn_list
         return dec_output,
+
+
+class BERT_like(nn.Module):
+    
+    def __init__(
+        self, n_src_vocab, src_pad_idx, d_word_vec=512, d_model=512, d_inner=2048, n_layers=12, n_head=8,
+        d_k=64, d_v=64, dropout=0.1, n_position=200, 
+        scale_emb_or_prj='prj'
+    ):
+        ## What's different with Transformer's args
+        # n_trg_vocab, trg_pad_idx, trg_emb_prj_weight_sharing, emb_src_trg_weight_sharing
+        super().__init__()
         
+        self.src_pad_idx = src_pad_idx
+        """
+        # Sharing the same matrix between the two embedding layers and the pre-softmax linear transformation.
+        # In the embedding layers, thoese weights were multiplied by \sqrt{d_model}.
+        #
+        # Options (made by @github. Huang)
+        #   'emb': multiply \sqrt{d_model} to embedding output
+        #   'prj': multiply (\sqrt{d_model} ^ -1) to linear projection output
+        #   'none': no multiplication
+        
+        assert scale_emb_or_prj in ['emb', 'prj', 'none'], 'Model arg \'scale_emb_or_prj\' : emb, prj, none'
+        scale_emb = (scale_emb_or_prj == 'emb') if trg_emb_prj_weight_sharing else False
+        self.scale_prj = (scale_emb_or_prj == 'prj') if trg_emb_prj_weight_sharing else False
+        
+        이 부분 없어도 되는게 맞나?
+        """
+        self.d_model = d_model
+        
+        self.encoder = Encoder(
+            n_src_vocab=n_src_vocab, d_word_vec=d_word_vec,
+            n_layers=n_layers, n_head=n_head, d_k=d_k, d_v=d_v, d_model=d_model,
+            d_inner=d_inner, pad_idx=src_pad_idx, dropout=dropout, n_position=200, scale_emb=None
+        )
+        
+        self.src_word_prj = nn.Linear(d_model, n_src_vocab, bias=False)
+        
+         # 2차원 이상 param에 대해서 xavier 초기화 적용.
+        for p in self.parameters():
+            if p.dim() >1:
+                nn.init.xavier_uniform(p)
+        
+        assert d_model == d_word_vec, 'In order to make use of residual connections, the dimensions of all module ouputs shall be the same.'
+        
+    
+    def forward(self, src_seq):
+        
+        src_mask = get_pad_mask(src_seq, self.src_pad_idx)
+        
+        enc_output, *_ = self.encoder(src_seq, src_mask)
+        seq_logit = self.src_word_prj(enc_output)
+        # if self.scale_prj:
+        #     seq_logit *= self.d_model ** -0.5
+        
+        return seq_logit.view(-1, seq_logit.size(2))
 
 class Transformer(nn.Module):
     
