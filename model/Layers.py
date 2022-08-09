@@ -4,10 +4,10 @@ import torch.nn as nn
 import torch
 from model.SubLayers import MultiHeadAttention, PositionwiseFeedForward
 
-class EncoderLyaer(nn.Module):
+class EncoderLayer(nn.Module):
     
     def __init__(self, d_model, d_inner, n_head, d_k, d_v, dropout = 0.1):
-        super(EncoderLyaer, self).__init__()    # grad, forward 등 계산에 필요한 여러 변수들을 미리 선언해주는 super().__init__() / 직접 모듈을 만드는 경우 이를 반드시 선언해줘야 정상적인 모듈이 된다.
+        super(EncoderLayer, self).__init__()    # grad, forward 등 계산에 필요한 여러 변수들을 미리 선언해주는 super().__init__() / 직접 모듈을 만드는 경우 이를 반드시 선언해줘야 정상적인 모듈이 된다.
         self.slf_attn = MultiHeadAttention(n_head, d_model, d_k, d_v, dropout=dropout)
         self.pos_ffn = PositionwiseFeedForward(d_model, d_inner, dropout)
         

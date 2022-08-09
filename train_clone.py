@@ -11,8 +11,12 @@ import os
 import torch
 import torch.nn.functional as F
 import torch.optim as optim
-from torchtext.data import Field, Dataset, BucketIterator
-from torchtext.datasets import TextclassificationDataset, TranslationDataset
+
+# ==================================================================#
+# ! all of these are deprecated libraries. Think I should try with more general DataLoader 
+from torchtext.legacy.data import Dataset, BucketIterator, Field    # * 작성자가 이전버전의 torchtext 사용중이라서 legacy 카테고리의 것들 사용해야한다.
+from torchtext.legacy.datasets import TranslationDataset
+# ==================================================================#
 
 import model.Constants as Constants
 from model.Models import BERT_like, Transformer
