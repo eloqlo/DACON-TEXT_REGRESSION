@@ -17,7 +17,8 @@ import model.Constants as Constants
 from model.Models import BERT_like
 # from model.Optim import ScheduledOptim
 
-# not yet
+# metric?
+# not yet, label smoothing?
 def cal_performance(pred, gold, trg_pad_idx, smoothing=False):
     ''' Apply label smoothing if needed '''
 
@@ -31,6 +32,7 @@ def cal_performance(pred, gold, trg_pad_idx, smoothing=False):
 
     return loss, n_correct, n_word
 
+# loss?
 # label smoothing ?
 # Tensor.scatter() ?
 def cal_loss(pred, gold, trg_pad_idx, smoothing=False):
@@ -107,12 +109,12 @@ def eval_epoch(model, validation_data, device, opt):
 def train(model, training_data, validation_data, optimizer, device, opt):
     """Start Training"""
     
-    # Use tensorboard to plot curves, e.g. perplexity, accuracy, learning rate
+    # Tensorboard
     if opt.use_tb:
         print("[Info] Use Tensorboard")
         from torch.utils.tensorboard import SummaryWriter
         tb_writer = SummaryWriter(log_dir=os.path.join(opt.output_dir, 'tensorboard'))
-        
+    
     log_train_file = os.path.join(opt.output_dir, 'train.log')
     log_valid_file = os.path.join(opt.output_dir, 'valid.log')
     
@@ -120,6 +122,7 @@ def train(model, training_data, validation_data, optimizer, device, opt):
         log_train_file, log_valid_file
     ))
     
+    # write column names
     with open(log_train_file, 'w') as log_tf, open(log_valid_file, 'w') as log_vf:
         log_tf.write('epoch,loss,ppl,accuracy\n')
         log_vf.write('epoch,loss,ppl,accuracy\n')
