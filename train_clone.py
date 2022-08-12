@@ -321,7 +321,7 @@ def prepare_dataloaders_from_bpe_files(opt, device):
     )
     
     opt.max_token_seq_len = MAX_LEN + 2
-    opt.src_pad_idx = opt.trg_pad_idx = field.vocab.stoi[Constants.PAD_WORD]
+    opt.src_pad_idx = opt.trg_pad_idx = field.vocab.stoi[Constants.PAD_WORD]    # vocab에서 pad_word 의 index 말하는거.
     opt.src_vocab_size = opt.trg_vocab_size = len(field.vocab)
     
     train_iterator = BucketIterator(train, batch_size=batch_size, device=device, train=True)
